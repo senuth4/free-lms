@@ -1,0 +1,6 @@
+{
+  "name": "EduLanka A/L Hub",
+  "description": "Sri Lankan A/L tuition teachers free YouTube lessons and PDFs platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

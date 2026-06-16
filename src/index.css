@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-[#05070a] text-white min-h-screen relative overflow-x-hidden;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/[0.03] backdrop-blur-[10px] border border-white/[0.08] rounded-2xl;
+  }
+  .glass-card {
+    @apply bg-white/[0.03] backdrop-blur-[10px] border border-white/[0.08] rounded-2xl hover:-translate-y-1 transition-transform duration-200;
+  }
+  .nav-pill {
+    @apply px-4 py-1.5 rounded-full text-sm font-medium transition-all cursor-pointer border border-transparent;
+  }
+  .nav-pill-active {
+    @apply bg-[#00a2ff]/15 border-[#00a2ff]/30 text-[#00a2ff];
+  }
+  .teacher-circle {
+    @apply rounded-full border-2 border-[#00a2ff] p-0.5;
+  }
+}
+
+/* Accent Glows from Design */
+body::before {
+  content: "";
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 150, 255, 0.15) 0%, transparent 70%);
+  z-index: -1;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  bottom: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+  z-index: -1;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes dna-shift {
+  0% { transform: translateX(0) scaleX(1); }
+  100% { transform: translateX(120px) scaleX(-1); }
+}
+
+.animate-dna {
+  animation: dna-shift 4s ease-in-out infinite alternate;
+}
+
+/* React Quill Dark Theme Adjustments */
+.quill-dark .ql-toolbar {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.quill-dark .ql-toolbar .ql-stroke {
+  stroke: #ffffff;
+}
+.quill-dark .ql-toolbar .ql-fill {
+  fill: #ffffff;
+}
+.quill-dark .ql-toolbar .ql-picker {
+  color: #ffffff;
+}
+.quill-dark .ql-container {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  min-height: 200px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.quill-dark .ql-editor {
+  color: #e2e8f0;
+  font-size: 1rem;
+}
+.quill-dark .ql-editor.ql-blank::before {
+  color: rgba(255, 255, 255, 0.3);
+}

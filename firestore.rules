@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'senuthbandara28@gmail.com'
+      ); 
+    }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+
+    function isValidTeacher(data) {
+      return data.keys().hasAll(['name', 'subjectId', 'imageUrl', 'description', 'socials']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.subjectId is string && data.subjectId.size() <= 128 &&
+             data.imageUrl is string && data.imageUrl.size() <= 1000 &&
+             data.description is string && data.description.size() <= 5000 &&
+             data.socials is map;
+    }
+
+    function isValidCourse(data) {
+      return data.keys().hasAll(['title', 'subjectId', 'teacherId', 'subcategoryId', 'unit', 'thumbnailUrl', 'views', 'links']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.subjectId is string && data.subjectId.size() <= 128 &&
+             data.teacherId is string && data.teacherId.size() <= 128 &&
+             data.subcategoryId is string && data.subcategoryId.size() <= 128 &&
+             data.unit is string && data.unit.size() <= 100 &&
+             data.thumbnailUrl is string && data.thumbnailUrl.size() <= 1000 &&
+             data.views is number &&
+             data.links is list && data.links.size() <= 20;
+    }
+
+    function isValidAd(data) {
+      return data.keys().hasAll(['title', 'teacherId', 'imageUrl', 'description']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.teacherId is string && data.teacherId.size() <= 128 &&
+             data.imageUrl is string && data.imageUrl.size() <= 1000 &&
+             data.description is string && data.description.size() <= 2000;
+    }
+
+    match /admins/{adminId} {
+      allow read: if isSignedIn() && request.auth.uid == adminId;
+      allow write: if false; // Only manageable through Firebase Console natively
+    }
+
+    match /teachers/{teacherId} {
+      allow read: if true;
+      allow list: if true;
+      allow create: if isAdmin() && isValidId(teacherId) && isValidTeacher(incoming()) && incoming().createdAt == request.time;
+      allow update: if isAdmin() && isValidId(teacherId) && isValidTeacher(incoming()) && incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(teacherId);
+    }
+
+    match /courses/{courseId} {
+      allow read: if true;
+      allow list: if true;
+      allow create: if isAdmin() && isValidId(courseId) && isValidCourse(incoming()) && incoming().createdAt == request.time;
+      allow update: if isAdmin() && isValidId(courseId) && isValidCourse(incoming()) && (incoming().updatedAt == request.time || incoming().views > existing().views);
+      allow delete: if isAdmin() && isValidId(courseId);
+    }
+
+    match /ads/{adId} {
+      allow read: if true;
+      allow list: if true;
+      allow create: if isAdmin() && isValidId(adId) && isValidAd(incoming()) && incoming().createdAt == request.time;
+      allow update: if isAdmin() && isValidId(adId) && isValidAd(incoming()) && incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(adId);
+    }
+
+    match /subjects/{subjectId} {
+      allow read: if true;
+      allow list: if true;
+    }
+
+    match /subcategories/{subcategoryId} {
+      allow read: if true;
+      allow list: if true;
+    }
+  }
+}
