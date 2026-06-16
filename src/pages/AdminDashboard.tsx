@@ -78,7 +78,7 @@ export default function AdminDashboard() {
   const handleAddCourseLink = () => {
     setNewCourse(prev => ({
       ...prev,
-      courseLinks: [...(prev.courseLinks || []), { title: 'New Resource', url: '', type: 'video' }]
+      courseLinks: [...(prev.courseLinks || []), { id: `link-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, title: 'New Resource', url: '', type: 'video' }]
     }));
   };
 
@@ -153,6 +153,12 @@ export default function AdminDashboard() {
   const handleAddEditor = () => {
     if (newEditorEmail) {
       addEditor(newEditorEmail.trim());
+      
+      const loginUrl = window.location.origin + '/admin';
+      const subject = encodeURIComponent('Invitation to Editor Dashboard');
+      const body = encodeURIComponent(`Hello,\n\nYou have been invited as an Editor to the platform.\n\nPlease log in using this Google account (${newEditorEmail}) at the following link:\n${loginUrl}\n\nBest regards,\nAdmin Team`);
+      window.open(`mailto:${newEditorEmail.trim()}?subject=${subject}&body=${body}`, '_blank');
+      
       setShowEditorForm(false);
       setNewEditorEmail('');
     }
@@ -413,16 +419,24 @@ export default function AdminDashboard() {
             <div className="glass-panel p-6 space-y-4">
               <h3 className="font-bold text-lg border-b border-white/10 pb-2">Grant Editor Access</h3>
               <p className="text-sm text-gray-400 mb-2">Editors can only manage courses. They cannot manage subjects, teachers, ads, or other settings.</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <input 
                   type="email" 
                   placeholder="Google Email Address" 
                   value={newEditorEmail}
                   onChange={e => setNewEditorEmail(e.target.value)}
-                  className="bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-[#00a2ff] md:col-span-2" 
+                  className="bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-[#00a2ff]" 
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="bg-[#00a2ff]/10 border border-[#00a2ff]/20 p-4 rounded-lg mt-4">
+                <p className="text-sm text-[#00a2ff] font-medium mb-2">Invite Link</p>
+                <p className="text-xs text-gray-300 mb-2">After granting access, share this link with the editor. They can sign in using the Google account you authorized.</p>
+                <div className="flex items-center gap-2">
+                  <input readOnly value={`${window.location.origin}/admin`} className="bg-slate-900 border border-white/10 rounded p-2 text-white text-xs flex-1 outline-none" />
+                  <button onClick={() => navigator.clipboard.writeText(`${window.location.origin}/admin`)} className="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded text-xs transition-colors">Copy</button>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
                 <button onClick={() => setShowEditorForm(false)} className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">Cancel</button>
                 <button onClick={handleAddEditor} className="bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors">Grant Access</button>
               </div>

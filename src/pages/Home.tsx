@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, PlayCircle, Users } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
 import CourseCard from '../components/CourseCard';
 import TeacherCard from '../components/TeacherCard';
+import SEO from '../components/SEO';
 
 export default function Home() {
   const { ads, teachers, courses } = useAppData();
@@ -29,14 +30,15 @@ export default function Home() {
 
   return (
     <div className="space-y-16 pb-16">
+      <SEO title="Learning Platform - Welcome" />
       
       {/* Hero Section - Ad Slider */}
       <section className="relative rounded-3xl overflow-hidden glass-panel h-[500px]">
         <div 
-          className="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-80"
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-100"
           style={{ backgroundImage: `url(${currentAd.imageUrl})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
         
         <div className="relative h-full flex flex-col justify-end p-8 md:p-12">
           <div className="max-w-3xl space-y-4">

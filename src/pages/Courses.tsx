@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Filter } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
 import CourseCard from '../components/CourseCard';
+import SEO from '../components/SEO';
 
 export default function Courses() {
   const { courses, teachers } = useAppData();
@@ -19,6 +20,7 @@ export default function Courses() {
 
   return (
     <div className="space-y-8 pb-16">
+      <SEO title="All Courses" description="Browse all available classes and courses across different subjects." />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">

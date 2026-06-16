@@ -5,6 +5,7 @@ import { useAppData } from '../context/AppDataContext';
 // @ts-ignore
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import SEO from '../components/SEO';
 
 export default function Player() {
   const { courses, teachers, subjects } = useAppData();
@@ -36,8 +37,8 @@ export default function Player() {
   const teacher = teachers.find(t => t.id === course.teacherId);
   const subject = subjects.find(s => s.id === course.subjectId);
   
-  const videoLinks = course.links.filter(l => l.type === 'video');
-  const pdfLinks = course.links.filter(l => l.type === 'pdf');
+  const videoLinks = course.links?.filter((l: any) => l.type === 'video') || [];
+  const pdfLinks = course.links?.filter((l: any) => l.type === 'pdf') || [];
 
   const [activeVideo, setActiveVideo] = useState(videoLinks.length > 0 ? videoLinks[0] : null);
 
@@ -57,6 +58,11 @@ export default function Player() {
 
   return (
     <div className="space-y-6 pb-16">
+      <SEO 
+        title={course.title}
+        description={`Course: ${course.title} by ${teacher?.name}`}
+        image={course.thumbnailUrl}
+      />
       <Link to="/" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-[#00a2ff] transition-colors">
         <ChevronLeft className="w-4 h-4" /> Back
       </Link>
@@ -138,12 +144,12 @@ export default function Player() {
              </h3>
              <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                {videoLinks.length > 0 ? (
-                 videoLinks.map((video, idx) => (
+                 videoLinks.map((video: any, idx: number) => (
                    <button 
-                     key={video.id}
+                     key={idx}
                      onClick={() => setActiveVideo(video)}
                      className={`w-full text-left p-3 rounded-xl text-sm transition-all flex gap-3 ${
-                       activeVideo?.id === video.id 
+                       activeVideo?.url === video.url 
                         ? 'bg-cyan-500/20 border border-cyan-500/30 text-cyan-50 font-medium'
                         : 'hover:bg-white/5 text-slate-300 border border-transparent'
                      }`}
@@ -165,9 +171,9 @@ export default function Player() {
              </h3>
              <div className="space-y-2">
                {pdfLinks.length > 0 ? (
-                 pdfLinks.map((pdf) => (
+                 pdfLinks.map((pdf: any, idx: number) => (
                    <a 
-                     key={pdf.id}
+                     key={idx}
                      href={pdf.url}
                      target="_blank"
                      rel="noreferrer"

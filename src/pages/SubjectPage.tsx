@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useAppData } from '../context/AppDataContext';
 import CourseCard from '../components/CourseCard';
 import TeacherCard from '../components/TeacherCard';
+import SEO from '../components/SEO';
 
 export default function SubjectPage() {
   const { subjects, subcategories, courses, teachers } = useAppData();
@@ -23,6 +24,11 @@ export default function SubjectPage() {
 
   return (
     <div className="space-y-12 pb-16">
+      <SEO 
+        title={subject.name}
+        description={`Explore all courses and teachers for ${subject.name}.`}
+        image={subject.imageUrl}
+      />
       <div className="relative rounded-3xl overflow-hidden glass-panel h-[300px] flex items-center">
          <div 
             className="absolute inset-0 bg-cover bg-center opacity-30"

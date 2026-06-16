@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { Youtube, Facebook, MessageCircle } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
 import CourseCard from '../components/CourseCard';
+import SEO from '../components/SEO';
 
 export default function TeacherProfile() {
   const { teachers, courses, ads, subjects } = useAppData();
@@ -18,7 +19,11 @@ export default function TeacherProfile() {
 
   return (
     <div className="space-y-12 pb-16">
-      
+      <SEO 
+        title={teacher.name}
+        description={`Learn from ${teacher.name}. ${teacher.description?.slice(0, 150) || ''}`}
+        image={teacher.imageUrl}
+      />
       {/* Profile Header */}
       <div className="glass-panel rounded-3xl p-8 md:p-12 relative overflow-hidden">
          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-[#00a2ff]/40 to-purple-900/40" />
