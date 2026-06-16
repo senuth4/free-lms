@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PlayCircle, FileText, ChevronLeft, PenTool } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
-// @ts-ignore
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+// Removed ReactQuill import
 import SEO from '../components/SEO';
 
 export default function Player() {
@@ -74,7 +72,7 @@ export default function Player() {
           
           {/* Video Player Box */}
           <div className="glass-panel rounded-2xl overflow-hidden aspect-video relative">
-            {activeVideo ? (
+            {activeVideo?.url ? (
               <iframe 
                 src={getEmbedUrl(activeVideo.url)} 
                 title={activeVideo.title}
@@ -103,7 +101,7 @@ export default function Player() {
             
             <div className="flex items-center justify-between border-t border-white/5 pt-6">
                <Link to={`/teacher/${teacher?.id}`} className="flex items-center gap-4 group">
-                 <img src={teacher?.imageUrl} alt={teacher?.name} className="w-12 h-12 rounded-full border border-white/10 group-hover:border-cyan-400 transition-colors" />
+                 <img src={teacher?.imageUrl || undefined} alt={teacher?.name} className="w-12 h-12 rounded-full border border-white/10 group-hover:border-cyan-400 transition-colors" />
                  <div>
                    <p className="font-medium text-slate-200 group-hover:text-cyan-400 transition-colors">{teacher?.name}</p>
                    <p className="text-xs text-slate-400">View Profile</p>
@@ -123,12 +121,11 @@ export default function Player() {
                <PenTool className="w-5 h-5 text-[#00a2ff]" /> Personal Notes
             </h3>
             <div className="text-slate-300">
-              <ReactQuill 
-                theme="snow" 
+              <textarea 
                 value={notes} 
-                onChange={handleNotesChange} 
+                onChange={(e) => handleNotesChange(e.target.value)} 
                 placeholder="Take notes while studying... (Auto-saved locally)"
-                className="quill-dark"
+                className="w-full h-48 bg-white/5 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-[#00a2ff] resize-none"
               />
             </div>
           </div>

@@ -19,7 +19,7 @@ export default function CourseCard(props: { course: Course, key?: React.Key }) {
       <div className="glass-card rounded-2xl overflow-hidden h-full flex flex-col">
         <div className="relative aspect-video overflow-hidden">
           <img 
-            src={course.thumbnailUrl} 
+            src={course.thumbnailUrl || undefined} 
             alt={course.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -41,7 +41,7 @@ export default function CourseCard(props: { course: Course, key?: React.Key }) {
           
           <div className="mt-auto flex items-center justify-between pt-4 border-t border-white/5">
             <div className="flex items-center gap-2">
-              <img src={teacher?.imageUrl} alt={teacher?.name} className="w-6 h-6 rounded-full object-cover" />
+              <img src={teacher?.imageUrl || undefined} alt={teacher?.name} className="w-6 h-6 rounded-full object-cover" />
               <span className="text-xs text-slate-400 truncate max-w-[100px]">{teacher?.name}</span>
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-400">

@@ -30,7 +30,7 @@ export default function TeacherProfile() {
          
          <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8 mt-12 md:mt-16">
             <img 
-              src={teacher.imageUrl} 
+              src={teacher.imageUrl || undefined} 
               alt={teacher.name}
               className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-slate-900 shadow-2xl"
             />

@@ -14,7 +14,7 @@ export default function TeacherCard(props: { teacher: Teacher, key?: React.Key }
       <Link to={`/teacher/${teacher.id}`} className="block relative w-24 h-24 mb-4">
         <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 to-purple-500 rounded-full animate-spin-slow opacity-0 group-hover:opacity-100 blur-md transition-opacity" />
         <img 
-          src={teacher.imageUrl} 
+          src={teacher.imageUrl || undefined} 
           alt={teacher.name}
           className="relative w-full h-full rounded-full object-cover border-2 border-white/10 group-hover:border-transparent transition-all"
         />

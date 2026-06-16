@@ -552,7 +552,7 @@ export default function AdminDashboard() {
                 {teachers.map(t => (
                   <tr key={t.id} className="border-b border-white/5 hover:bg-white/[0.02]">
                     <td className="p-4 text-white flex items-center gap-3">
-                      <img src={t.imageUrl} className="w-8 h-8 rounded-full object-cover" alt="" />
+                      <img src={t.imageUrl || undefined} className="w-8 h-8 rounded-full object-cover" alt="" />
                       {t.name}
                     </td>
                     <td className="p-4 text-gray-400">{subjects.find(s => s.id === t.subjectId)?.name}</td>
@@ -775,7 +775,7 @@ export default function AdminDashboard() {
                 {ads.map(t => (
                   <tr key={t.id} className="border-b border-white/5 hover:bg-white/[0.02]">
                     <td className="p-4 text-white flex items-center gap-3">
-                      <img src={t.imageUrl} className="w-16 h-8 rounded object-cover" alt="" />
+                      <img src={t.imageUrl || undefined} className="w-16 h-8 rounded object-cover" alt="" />
                       {t.title}
                     </td>
                     <td className="p-4 text-gray-400">{teachers.find(s => s.id === t.teacherId)?.name}</td>

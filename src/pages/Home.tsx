@@ -57,7 +57,7 @@ export default function Home() {
           {adTeacher && (
             <div className="mt-8 flex items-center gap-4 glass-card p-4 rounded-2xl w-fit">
               <img 
-                src={adTeacher.imageUrl} 
+                src={adTeacher.imageUrl || undefined} 
                 alt={adTeacher.name} 
                 className="w-16 h-16 rounded-full object-cover border-2 border-purple-500/50"
               />
