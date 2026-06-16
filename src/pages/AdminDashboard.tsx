@@ -1,33 +1,47 @@
-import React, { useState } from 'react';
-import { Activity, Users, Clock, BookOpen, Layers, LogOut } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Activity, Users, Clock, BookOpen, Layers, LogOut, Shield } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
 import { Course, Teacher, Subcategory, Ad } from '../types';
 
 export default function AdminDashboard() {
   const { 
-    courses, teachers, subjects, subcategories, ads,
+    courses, teachers, subjects, subcategories, ads, editors, isSuperAdmin, isEditor,
     addTeacher, deleteTeacher, updateTeacher,
     addCourse, deleteCourse, updateCourse,
     addSubcategory, deleteSubcategory,
+    addSubject, deleteSubject,
+    addEditor, deleteEditor,
     addAd, deleteAd, logoutAdmin
   } = useAppData();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'teachers' | 'courses' | 'categories'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'teachers' | 'courses' | 'categories' | 'ads' | 'editors'>('courses');
   
+  useEffect(() => {
+    if (isSuperAdmin) {
+      setActiveTab('overview');
+    } else {
+      setActiveTab('courses');
+    }
+  }, [isSuperAdmin]);
+
   // Forms state
   const [showTeacherForm, setShowTeacherForm] = useState(false);
   const [showCourseForm, setShowCourseForm] = useState(false);
   const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [showSubjectForm, setShowSubjectForm] = useState(false);
   const [showAdForm, setShowAdForm] = useState(false);
+  const [showEditorForm, setShowEditorForm] = useState(false);
 
   // Form Fields
   const [newTeacher, setNewTeacher] = useState<Partial<Teacher>>({ socials: {} });
   const [newCourse, setNewCourse] = useState<Partial<Course> & { courseLinks?: { title: string, url: string, type: 'video' | 'pdf' }[] }>({ courseLinks: [] });
   const [newCategory, setNewCategory] = useState({ name: '' });
+  const [newSubject, setNewSubject] = useState({ name: '', imageUrl: '' });
   const [newAd, setNewAd] = useState<Partial<Ad>>({});
+  const [newEditorEmail, setNewEditorEmail] = useState('');
 
   const handleSaveTeacher = () => {
-    if (newTeacher.name && newTeacher.subjectId) {
+    if (newTeacher.name) {
       if (newTeacher.id) {
         updateTeacher({
           ...newTeacher,
@@ -41,7 +55,7 @@ export default function AdminDashboard() {
         addTeacher({
           id: `t-${Date.now()}`,
           name: newTeacher.name,
-          subjectId: newTeacher.subjectId,
+          subjectId: newTeacher.subjectId || '',
           imageUrl: newTeacher.imageUrl || 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=300',
           description: newTeacher.description || '',
           socials: {
@@ -84,7 +98,7 @@ export default function AdminDashboard() {
   };
 
   const handleSaveCourse = () => {
-    if (newCourse.title && newCourse.subjectId && newCourse.teacherId && newCourse.subcategoryId) {
+    if (newCourse.title) {
       if (newCourse.id) {
         updateCourse({
           ...newCourse,
@@ -94,9 +108,9 @@ export default function AdminDashboard() {
         addCourse({
           id: `c-${Date.now()}`,
           title: newCourse.title,
-          subjectId: newCourse.subjectId,
-          teacherId: newCourse.teacherId,
-          subcategoryId: newCourse.subcategoryId,
+          subjectId: newCourse.subjectId || '',
+          teacherId: newCourse.teacherId || '',
+          subcategoryId: newCourse.subcategoryId || '',
           unit: newCourse.unit || 'General',
           thumbnailUrl: newCourse.thumbnailUrl || 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&q=80&w=800',
           links: newCourse.courseLinks as any || [],
@@ -124,6 +138,26 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleAddSubject = () => {
+    if (newSubject.name) {
+      addSubject({
+        id: `sub-${Date.now()}`,
+        name: newSubject.name,
+        imageUrl: newSubject.imageUrl
+      });
+      setShowSubjectForm(false);
+      setNewSubject({ name: '', imageUrl: '' });
+    }
+  };
+
+  const handleAddEditor = () => {
+    if (newEditorEmail) {
+      addEditor(newEditorEmail.trim());
+      setShowEditorForm(false);
+      setNewEditorEmail('');
+    }
+  };
+
   const handleAddAd = () => {
     if (newAd.teacherId && newAd.imageUrl) {
       addAd({
@@ -142,7 +176,7 @@ export default function AdminDashboard() {
     <div className="space-y-8 pb-16">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00a2ff] to-purple-400">
-          Admin Dashboard
+          {isSuperAdmin ? 'Admin Dashboard' : 'Editor Dashboard'}
         </h1>
         <button 
           onClick={logoutAdmin}
@@ -154,64 +188,60 @@ export default function AdminDashboard() {
       </div>
 
       <div className="flex space-x-2 border-b border-white/10 pb-4 overflow-x-auto custom-scrollbar">
-        <button
-          className={`nav-pill whitespace-nowrap ${activeTab === 'overview' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-          onClick={() => setActiveTab('overview')}
-        >
-          Overview
-        </button>
-        <button
-          className={`nav-pill whitespace-nowrap ${activeTab === 'teachers' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-          onClick={() => setActiveTab('teachers')}
-        >
-          Manage Teachers
-        </button>
+        {isSuperAdmin && (
+          <>
+            <button
+              className={`nav-pill whitespace-nowrap ${activeTab === 'overview' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              Overview
+            </button>
+            <button
+              className={`nav-pill whitespace-nowrap ${activeTab === 'subjects' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setActiveTab('subjects')}
+            >
+              Subjects
+            </button>
+            <button
+              className={`nav-pill whitespace-nowrap ${activeTab === 'teachers' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setActiveTab('teachers')}
+            >
+              Manage Teachers
+            </button>
+          </>
+        )}
         <button
           className={`nav-pill whitespace-nowrap ${activeTab === 'courses' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
           onClick={() => setActiveTab('courses')}
         >
           Manage Courses
         </button>
-        <button
-          className={`nav-pill whitespace-nowrap ${activeTab === 'categories' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-          onClick={() => setActiveTab('categories')}
-        >
-          Course Types
-        </button>
-        <button
-          className={`nav-pill whitespace-nowrap ${activeTab === 'ads' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-          onClick={() => setActiveTab('ads')}
-        >
-          Manage Ads
-        </button>
+        {isSuperAdmin && (
+          <>
+            <button
+              className={`nav-pill whitespace-nowrap ${activeTab === 'categories' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setActiveTab('categories')}
+            >
+              Course Types
+            </button>
+            <button
+              className={`nav-pill whitespace-nowrap ${activeTab === 'ads' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setActiveTab('ads')}
+            >
+              Manage Ads
+            </button>
+            <button
+              className={`nav-pill whitespace-nowrap ${activeTab === 'editors' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setActiveTab('editors')}
+            >
+              Manage Editors
+            </button>
+          </>
+        )}
       </div>
 
-      {activeTab === 'overview' && (
+      {isSuperAdmin && activeTab === 'overview' && (
         <section className="space-y-6">
-          {subjects.length === 0 && (
-            <div className="bg-[#00a2ff]/10 border border-[#00a2ff]/20 rounded-xl p-4 flex items-center justify-between">
-              <p className="text-gray-300 text-sm">Your database is empty. You can seed initial subjects to get started.</p>
-              <button 
-                onClick={async () => {
-                   // Quick seed
-                   const db = (await import('../lib/firebase')).db;
-                   const { doc, setDoc } = await import('firebase/firestore');
-                   const sample = [
-                    { id: 'sub-phy', name: 'Physics' },
-                    { id: 'sub-chem', name: 'Chemistry' },
-                    { id: 'sub-math', name: 'Combined Maths' },
-                    { id: 'sub-bio', name: 'Biology' },
-                   ];
-                   for (const s of sample) {
-                     await setDoc(doc(db, 'subjects', s.id), s);
-                   }
-                }}
-                className="bg-[#00a2ff] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors"
-              >
-                Seed Subjects
-              </button>
-            </div>
-          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="glass-panel p-6 flex flex-col gap-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -252,7 +282,68 @@ export default function AdminDashboard() {
         </section>
       )}
 
-      {activeTab === 'categories' && (
+      {isSuperAdmin && activeTab === 'subjects' && (
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold flex items-center gap-2">Subjects</h2>
+            <button 
+              className="bg-[#00a2ff] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors"
+              onClick={() => setShowSubjectForm(!showSubjectForm)}
+            >
+              + Add Subject
+            </button>
+          </div>
+
+          {showSubjectForm && (
+            <div className="glass-panel p-6 space-y-4">
+              <h3 className="font-bold text-lg border-b border-white/10 pb-2">New Subject</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input 
+                  type="text" 
+                  placeholder="Subject Name (e.g. Mathematics)" 
+                  value={newSubject.name}
+                  onChange={e => setNewSubject({ ...newSubject, name: e.target.value })}
+                  className="bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-[#00a2ff]" 
+                />
+                <input 
+                  type="text" 
+                  placeholder="Image URL (Optional)" 
+                  value={newSubject.imageUrl}
+                  onChange={e => setNewSubject({ ...newSubject, imageUrl: e.target.value })}
+                  className="bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-[#00a2ff]" 
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button onClick={() => setShowSubjectForm(false)} className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">Cancel</button>
+                <button onClick={handleAddSubject} className="bg-[#00a2ff] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">Save Subject</button>
+              </div>
+            </div>
+          )}
+
+          <div className="glass-panel overflow-hidden">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-white/5 border-b border-white/10">
+                <tr>
+                  <th className="p-4 font-semibold text-gray-300">Subject Name</th>
+                  <th className="p-4 font-semibold text-gray-300 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {subjects.map(s => (
+                  <tr key={s.id} className="border-b border-white/5 hover:bg-white/[0.02]">
+                    <td className="p-4 text-white font-medium">{s.name}</td>
+                    <td className="p-4 text-right">
+                      <button onClick={() => deleteSubject(s.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {isSuperAdmin && activeTab === 'categories' && (
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold flex items-center gap-2"><Layers className="w-5 h-5 text-[#00a2ff]" /> Course Types</h2>
@@ -296,7 +387,7 @@ export default function AdminDashboard() {
                   <tr key={c.id} className="border-b border-white/5 hover:bg-white/[0.02]">
                     <td className="p-4 text-white font-medium">{c.name}</td>
                     <td className="p-4 text-right">
-                      <button onClick={() => deleteSubcategory(c.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">Delete</button>
+                       <button onClick={() => deleteSubcategory(c.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -306,7 +397,62 @@ export default function AdminDashboard() {
         </section>
       )}
 
-      {activeTab === 'teachers' && (
+      {isSuperAdmin && activeTab === 'editors' && (
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold flex items-center gap-2"><Shield className="w-5 h-5 text-purple-400" /> Manage Editors</h2>
+            <button 
+              className="bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors"
+              onClick={() => setShowEditorForm(!showEditorForm)}
+            >
+              + Add Editor
+            </button>
+          </div>
+
+          {showEditorForm && (
+            <div className="glass-panel p-6 space-y-4">
+              <h3 className="font-bold text-lg border-b border-white/10 pb-2">Grant Editor Access</h3>
+              <p className="text-sm text-gray-400 mb-2">Editors can only manage courses. They cannot manage subjects, teachers, ads, or other settings.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input 
+                  type="email" 
+                  placeholder="Google Email Address" 
+                  value={newEditorEmail}
+                  onChange={e => setNewEditorEmail(e.target.value)}
+                  className="bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-[#00a2ff] md:col-span-2" 
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button onClick={() => setShowEditorForm(false)} className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">Cancel</button>
+                <button onClick={handleAddEditor} className="bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors">Grant Access</button>
+              </div>
+            </div>
+          )}
+
+          <div className="glass-panel overflow-hidden">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-white/5 border-b border-white/10">
+                <tr>
+                  <th className="p-4 font-semibold text-gray-300">Editor Email</th>
+                  <th className="p-4 font-semibold text-gray-300 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {editors.map(e => (
+                  <tr key={e.id} className="border-b border-white/5 hover:bg-white/[0.02]">
+                    <td className="p-4 text-white font-medium">{e.id}</td>
+                    <td className="p-4 text-right">
+                       <button onClick={() => deleteEditor(e.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">Revoke Access</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {isSuperAdmin && activeTab === 'teachers' && (
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold">Teachers</h2>
@@ -538,7 +684,9 @@ export default function AdminDashboard() {
                     <td className="p-4 text-purple-400">{subcategories.find(s => s.id === c.subcategoryId)?.name}</td>
                     <td className="p-4 text-right">
                       <button onClick={() => handleEditCourse(c)} className="text-[#00a2ff] hover:text-blue-400 text-xs font-medium mr-4">Edit</button>
-                      <button onClick={() => deleteCourse(c.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">Delete</button>
+                      {isSuperAdmin && (
+                        <button onClick={() => deleteCourse(c.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">Delete</button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -548,7 +696,7 @@ export default function AdminDashboard() {
         </section>
       )}
 
-      {activeTab === 'ads' && (
+      {isSuperAdmin && activeTab === 'ads' && (
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold">Manage Hero Ads</h2>

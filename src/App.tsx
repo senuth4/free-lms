@@ -12,11 +12,36 @@ import { AppDataProvider, useAppData } from './context/AppDataContext';
 import DNABackground from './components/DNABackground';
 
 const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAdminAuthenticated } = useAppData();
+  const { isAdminAuthenticated, isSuperAdmin, isEditor, logoutAdmin } = useAppData();
   if (!isAdminAuthenticated) {
     return <Navigate to="/admin" replace />;
   }
-  return children;
+  if (!isSuperAdmin && !isEditor) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-160px)]">
+        <div className="glass-panel p-8 max-w-md w-full text-center group">
+          <div className="animate-pulse w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/50">
+            <div className="w-6 h-6 border-2 border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">Verifying Access...</h2>
+          <p className="text-gray-400 text-sm mb-6">Checking your editor permissions</p>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 text-left">
+              • If you were just invited, please wait a moment.<br/>
+              • If this screen persists, your Google account may not have permission to view the dashboard.
+            </p>
+          </div>
+          <button 
+            onClick={logoutAdmin}
+            className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold py-3 rounded-xl transition-all border border-red-500/20"
+          >
+            Sign out of this Google Account
+          </button>
+        </div>
+      </div>
+    );
+  }
+  return <>{children}</>;
 };
 
 export default function App() {

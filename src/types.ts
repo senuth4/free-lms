@@ -39,6 +39,9 @@ export type Course = {
   views: number;
 };
 
+export type Editor = { id: string };
+export type Admin = { id: string };
+
 export type Ad = {
   id: string;
   title: string;

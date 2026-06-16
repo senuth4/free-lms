@@ -33,10 +33,10 @@ export default function Home() {
       {/* Hero Section - Ad Slider */}
       <section className="relative rounded-3xl overflow-hidden glass-panel h-[500px]">
         <div 
-          className="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-40"
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-80"
           style={{ backgroundImage: `url(${currentAd.imageUrl})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
         
         <div className="relative h-full flex flex-col justify-end p-8 md:p-12">
           <div className="max-w-3xl space-y-4">

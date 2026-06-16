@@ -26,8 +26,8 @@ export default function AdminLogin() {
           <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-4">
             <Lock className="w-8 h-8 text-[#00a2ff]" />
           </div>
-          <h2 className="text-2xl font-bold text-white">Admin Access</h2>
-          <p className="text-gray-400 text-sm mt-2">Sign in to manage content</p>
+          <h2 className="text-2xl font-bold text-white">Platform Access</h2>
+          <p className="text-gray-400 text-sm mt-2">Sign in to manage as Admin or Editor</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
