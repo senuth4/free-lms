@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { PlayCircle, FileText, ChevronLeft, PenTool } from 'lucide-react';
+import { PlayCircle, FileText, ChevronLeft, PenTool, Bookmark } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
 // Removed ReactQuill import
 import SEO from '../components/SEO';
 
 export default function Player() {
-  const { courses, teachers, subjects } = useAppData();
+  const { courses, teachers, subjects, bookmarkedCourses, toggleCourseBookmark } = useAppData();
   const { courseId } = useParams();
   const course = courses.find(c => c.id === courseId);
 
@@ -60,6 +60,7 @@ export default function Player() {
         title={course.title}
         description={`Course: ${course.title} by ${teacher?.name}`}
         image={course.thumbnailUrl}
+        type="article"
       />
       <Link to="/" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-[#00a2ff] transition-colors">
         <ChevronLeft className="w-4 h-4" /> Back
@@ -108,9 +109,14 @@ export default function Player() {
                  </div>
                </Link>
                
-               <div className="text-right">
-                 <p className="text-lg font-bold text-white">{(course.views / 1000).toFixed(1)}k</p>
-                 <p className="text-xs text-slate-400">Students Reached</p>
+               <div className="text-right flex items-center justify-end">
+                 <button 
+                    onClick={() => toggleCourseBookmark(course.id)}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/5"
+                 >
+                   <Bookmark className={`w-5 h-5 ${bookmarkedCourses.includes(course.id) ? 'fill-cyan-400 text-cyan-400' : 'text-slate-400'}`} />
+                   <span className="text-sm font-medium text-slate-300">{bookmarkedCourses.includes(course.id) ? 'Saved' : 'Save'}</span>
+                 </button>
                </div>
             </div>
           </div>

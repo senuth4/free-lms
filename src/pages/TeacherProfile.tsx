@@ -23,6 +23,7 @@ export default function TeacherProfile() {
         title={teacher.name}
         description={`Learn from ${teacher.name}. ${teacher.description?.slice(0, 150) || ''}`}
         image={teacher.imageUrl}
+        type="profile"
       />
       {/* Profile Header */}
       <div className="glass-panel rounded-3xl p-8 md:p-12 relative overflow-hidden">

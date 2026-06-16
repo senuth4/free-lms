@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Activity, Users, Clock, BookOpen, Layers, LogOut, Shield } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Activity, Users, Clock, BookOpen, Layers, LogOut, Shield, Eye, Video } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
 import { Course, Teacher, Subcategory, Ad } from '../types';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function AdminDashboard() {
   const { 
@@ -13,6 +14,31 @@ export default function AdminDashboard() {
     addEditor, deleteEditor,
     addAd, deleteAd, logoutAdmin
   } = useAppData();
+
+  const overviewData = useMemo(() => {
+    const totalViews = courses.reduce((acc, c) => acc + (c.views || 0), 0);
+    const viewsBySubject = subjects.map(s => {
+      const subjCourses = courses.filter(c => c.subjectId === s.id);
+      return {
+        name: s.name,
+        views: subjCourses.reduce((acc, c) => acc + (c.views || 0), 0),
+        courses: subjCourses.length,
+      };
+    });
+
+    const viewsByTeacher = teachers.map(t => {
+      const teacherCourses = courses.filter(c => c.teacherId === t.id);
+      return {
+        name: t.name,
+        views: teacherCourses.reduce((acc, c) => acc + (c.views || 0), 0),
+        courses: teacherCourses.length,
+      };
+    }).sort((a, b) => b.views - a.views).slice(0, 5);
+
+    return { totalViews, viewsBySubject, viewsByTeacher };
+  }, [courses, subjects, teachers]);
+
+  const COLORS = ['#00a2ff', '#a855f7', '#22c55e', '#f59e0b', '#ec4899'];
 
   const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'teachers' | 'courses' | 'categories' | 'ads' | 'editors'>('courses');
   
@@ -195,41 +221,39 @@ export default function AdminDashboard() {
 
       <div className="flex space-x-2 border-b border-white/10 pb-4 overflow-x-auto custom-scrollbar">
         {isSuperAdmin && (
-          <>
-            <button
-              className={`nav-pill whitespace-nowrap ${activeTab === 'overview' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-              onClick={() => setActiveTab('overview')}
-            >
-              Overview
-            </button>
-            <button
-              className={`nav-pill whitespace-nowrap ${activeTab === 'subjects' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-              onClick={() => setActiveTab('subjects')}
-            >
-              Subjects
-            </button>
-            <button
-              className={`nav-pill whitespace-nowrap ${activeTab === 'teachers' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-              onClick={() => setActiveTab('teachers')}
-            >
-              Manage Teachers
-            </button>
-          </>
+          <button
+            className={`nav-pill whitespace-nowrap ${activeTab === 'overview' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            Overview
+          </button>
         )}
+        <button
+          className={`nav-pill whitespace-nowrap ${activeTab === 'subjects' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+          onClick={() => setActiveTab('subjects')}
+        >
+          Subjects
+        </button>
+        <button
+          className={`nav-pill whitespace-nowrap ${activeTab === 'teachers' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+          onClick={() => setActiveTab('teachers')}
+        >
+          Manage Teachers
+        </button>
         <button
           className={`nav-pill whitespace-nowrap ${activeTab === 'courses' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
           onClick={() => setActiveTab('courses')}
         >
           Manage Courses
         </button>
+        <button
+          className={`nav-pill whitespace-nowrap ${activeTab === 'categories' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+          onClick={() => setActiveTab('categories')}
+        >
+          Course Types
+        </button>
         {isSuperAdmin && (
           <>
-            <button
-              className={`nav-pill whitespace-nowrap ${activeTab === 'categories' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-              onClick={() => setActiveTab('categories')}
-            >
-              Course Types
-            </button>
             <button
               className={`nav-pill whitespace-nowrap ${activeTab === 'ads' ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
               onClick={() => setActiveTab('ads')}
@@ -253,42 +277,114 @@ export default function AdminDashboard() {
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Users className="w-16 h-16 text-[#00a2ff]" />
               </div>
-              <p className="text-gray-400 font-medium text-sm">Daily Visitors</p>
-              <h3 className="text-3xl font-bold text-white">12,543</h3>
-              <p className="text-green-400 text-xs font-semibold mt-auto">+14% from yesterday</p>
+              <p className="text-gray-400 font-medium text-sm">Total Teachers</p>
+              <h3 className="text-3xl font-bold text-white">{teachers.length}</h3>
             </div>
             
             <div className="glass-panel p-6 flex flex-col gap-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Activity className="w-16 h-16 text-purple-400" />
+                <BookOpen className="w-16 h-16 text-purple-400" />
               </div>
-              <p className="text-gray-400 font-medium text-sm">Monthly Visitors</p>
-              <h3 className="text-3xl font-bold text-white">342k</h3>
-              <p className="text-green-400 text-xs font-semibold mt-auto">+5.2% this month</p>
+              <p className="text-gray-400 font-medium text-sm">Total Subjects</p>
+              <h3 className="text-3xl font-bold text-white">{subjects.length}</h3>
             </div>
 
             <div className="glass-panel p-6 flex flex-col gap-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <BookOpen className="w-16 h-16 text-blue-400" />
+                <Video className="w-16 h-16 text-blue-400" />
               </div>
               <p className="text-gray-400 font-medium text-sm">Total Courses</p>
               <h3 className="text-3xl font-bold text-white">{courses.length}</h3>
-              <p className="text-gray-400 text-xs mt-auto">Active on platform</p>
             </div>
 
             <div className="glass-panel p-6 flex flex-col gap-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Clock className="w-16 h-16 text-green-400" />
+                <Eye className="w-16 h-16 text-green-400" />
               </div>
-              <p className="text-gray-400 font-medium text-sm">Total Watch Time</p>
-              <h3 className="text-3xl font-bold text-white">8.2m hrs</h3>
-              <p className="text-gray-400 text-xs mt-auto">Across all courses</p>
+              <p className="text-gray-400 font-medium text-sm">Total Watch Views</p>
+              <h3 className="text-3xl font-bold text-white">
+                {(overviewData.totalViews / 1000).toFixed(1)}k
+              </h3>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="glass-panel p-6 rounded-2xl border border-white/10">
+              <h3 className="text-lg font-bold mb-6">Subject Popularity (Views)</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={overviewData.viewsBySubject}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      innerRadius={50}
+                      fill="#8884d8"
+                      dataKey="views"
+                      paddingAngle={5}
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {overviewData.viewsBySubject.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip 
+                      formatter={(value: number) => [`${value} Views`, 'Total']}
+                      contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="glass-panel p-6 rounded-2xl border border-white/10">
+              <h3 className="text-lg font-bold mb-6">Top Teachers by Views</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={overviewData.viewsByTeacher}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#fff" strokeOpacity={0.1} />
+                    <XAxis dataKey="name" stroke="#94a3b8" />
+                    <YAxis stroke="#94a3b8" />
+                    <RechartsTooltip 
+                      formatter={(value: number) => [`${value} Views`, 'Performance']}
+                      contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
+                      itemStyle={{ color: '#00a2ff' }}
+                    />
+                    <Bar dataKey="views" fill="#00a2ff" radius={[4, 4, 0, 0]}>
+                      {overviewData.viewsByTeacher.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            
+            <div className="glass-panel p-6 rounded-2xl border border-white/10 lg:col-span-2">
+              <h3 className="text-lg font-bold mb-6">Courses per Subject</h3>
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={overviewData.viewsBySubject}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#fff" strokeOpacity={0.1} />
+                    <XAxis dataKey="name" stroke="#94a3b8" />
+                    <YAxis stroke="#94a3b8" allowDecimals={false} />
+                    <RechartsTooltip 
+                      formatter={(value: number) => [`${value} Courses`, 'Total']}
+                      contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
+                      itemStyle={{ color: '#a855f7' }}
+                    />
+                    <Bar dataKey="courses" fill="#a855f7" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         </section>
       )}
 
-      {isSuperAdmin && activeTab === 'subjects' && (
+      {activeTab === 'subjects' && (
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold flex items-center gap-2">Subjects</h2>
@@ -349,7 +445,7 @@ export default function AdminDashboard() {
         </section>
       )}
 
-      {isSuperAdmin && activeTab === 'categories' && (
+      {activeTab === 'categories' && (
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold flex items-center gap-2"><Layers className="w-5 h-5 text-[#00a2ff]" /> Course Types</h2>
@@ -418,7 +514,7 @@ export default function AdminDashboard() {
           {showEditorForm && (
             <div className="glass-panel p-6 space-y-4">
               <h3 className="font-bold text-lg border-b border-white/10 pb-2">Grant Editor Access</h3>
-              <p className="text-sm text-gray-400 mb-2">Editors can only manage courses. They cannot manage subjects, teachers, ads, or other settings.</p>
+              <p className="text-sm text-gray-400 mb-2">Editors can manage subjects, teachers, courses, and course types. They cannot manage ads or other settings.</p>
               <div className="grid grid-cols-1 gap-4">
                 <input 
                   type="email" 
@@ -466,7 +562,7 @@ export default function AdminDashboard() {
         </section>
       )}
 
-      {isSuperAdmin && activeTab === 'teachers' && (
+      {activeTab === 'teachers' && (
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold">Teachers</h2>

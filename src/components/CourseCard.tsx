@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Play, FileText, Eye } from 'lucide-react';
+import { Play, FileText, Bookmark } from 'lucide-react';
 import { Course } from '../types';
 import { useAppData } from '../context/AppDataContext';
 
 export default function CourseCard(props: { course: Course, key?: React.Key }) {
   const { course } = props;
-  const { teachers, subjects } = useAppData();
+  const { teachers, subjects, bookmarkedCourses, toggleCourseBookmark } = useAppData();
   
   const teacher = teachers.find(t => t.id === course.teacherId);
   const subject = subjects.find(s => s.id === course.subjectId);
@@ -28,9 +28,15 @@ export default function CourseCard(props: { course: Course, key?: React.Key }) {
                {subject?.name}
              </span>
           </div>
-          <div className="absolute bottom-2 right-2 px-2 py-1 text-xs font-medium bg-slate-900/80 backdrop-blur text-white rounded shadow flex items-center gap-1">
-             <Eye className="w-3 h-3" /> {(course.views / 1000).toFixed(1)}k
-          </div>
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              toggleCourseBookmark(course.id);
+            }}
+            className="absolute bottom-2 right-2 p-1.5 bg-slate-900/80 backdrop-blur rounded shadow text-white hover:text-cyan-400 transition-colors"
+          >
+            <Bookmark className={`w-4 h-4 ${bookmarkedCourses.includes(course.id) ? 'fill-cyan-400 text-cyan-400' : ''}`} />
+          </button>
         </div>
         
         <div className="p-4 flex flex-col flex-grow">

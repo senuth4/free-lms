@@ -13,10 +13,12 @@ interface AppDataContextType {
   courses: Course[];
   editors: Editor[];
   admins: Admin[];
+  bookmarkedCourses: string[];
   isAdminAuthenticated: boolean;
   isSuperAdmin: boolean;
   isEditor: boolean;
   user: User | null;
+  toggleCourseBookmark: (courseId: string) => void;
   addTeacher: (teacher: Teacher) => Promise<void>;
   deleteTeacher: (id: string) => Promise<void>;
   updateTeacher: (teacher: Teacher) => Promise<void>;
@@ -46,6 +48,19 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [editors, setEditors] = useState<Editor[]>([]);
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  
+  const [bookmarkedCourses, setBookmarkedCourses] = useState<string[]>(() => {
+    const saved = localStorage.getItem('bookmarked_courses');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const toggleCourseBookmark = (courseId: string) => {
+    setBookmarkedCourses(prev => {
+      const _new = prev.includes(courseId) ? prev.filter(id => id !== courseId) : [...prev, courseId];
+      localStorage.setItem('bookmarked_courses', JSON.stringify(_new));
+      return _new;
+    });
+  };
   
   const isAdminAuthenticated = !!user;
   const isSuperAdmin = user?.email === 'senuthbandara28@gmail.com' || admins.some(a => a.id === user?.email);
@@ -241,8 +256,8 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   return (
     <AppDataContext.Provider value={{
-      subjects, subcategories, teachers, ads, courses, editors, admins, isAdminAuthenticated, isSuperAdmin, isEditor, user,
-      addTeacher, deleteTeacher, updateTeacher, addCourse, deleteCourse, updateCourse,
+      subjects, subcategories, teachers, ads, courses, editors, admins, bookmarkedCourses, isAdminAuthenticated, isSuperAdmin, isEditor, user,
+      toggleCourseBookmark, addTeacher, deleteTeacher, updateTeacher, addCourse, deleteCourse, updateCourse,
       addSubcategory, deleteSubcategory, addSubject, deleteSubject, addEditor, deleteEditor, addAd, deleteAd, loginAdmin, logoutAdmin
     }}>
       {children}

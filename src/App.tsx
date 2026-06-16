@@ -8,8 +8,11 @@ import TeacherProfile from './pages/TeacherProfile';
 import Player from './pages/Player';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
+import SavedCourses from './pages/SavedCourses';
 import { AppDataProvider, useAppData } from './context/AppDataContext';
 import DNABackground from './components/DNABackground';
+
+import BottomNav from './components/BottomNav';
 
 const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAdminAuthenticated, isSuperAdmin, isEditor, logoutAdmin } = useAppData();
@@ -51,10 +54,11 @@ export default function App() {
         <div className="flex flex-col min-h-screen relative z-0">
           <DNABackground />
           <Navbar />
-          <main className="flex-grow pt-20 px-4 md:px-8 lg:px-12 mx-auto w-full max-w-[1600px]">
+          <main className="flex-grow pt-20 pb-20 md:pb-8 px-4 md:px-8 lg:px-12 mx-auto w-full max-w-[1600px]">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/courses" element={<Courses />} />
+              <Route path="/saved" element={<SavedCourses />} />
               <Route path="/subject/:subjectId" element={<SubjectPage />} />
               <Route path="/teacher/:teacherId" element={<TeacherProfile />} />
               <Route path="/course/:courseId" element={<Player />} />
@@ -66,6 +70,7 @@ export default function App() {
               } />
             </Routes>
           </main>
+          <BottomNav />
         </div>
       </BrowserRouter>
     </AppDataProvider>
