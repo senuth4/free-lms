@@ -8,9 +8,9 @@ export default function BottomNav() {
 
   const navItems = [
     { label: 'Home', path: '/', icon: <Home className="w-6 h-6" /> },
-    { label: 'Courses', path: '/courses', icon: <Library className="w-6 h-6" /> },
+    { label: 'Lessons', path: '/lessons', icon: <Library className="w-6 h-6" /> },
     { 
-      label: 'Saved', 
+      label: 'Dashboard', 
       path: '/saved', 
       icon: (
         <div className="relative">

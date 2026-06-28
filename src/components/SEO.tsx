@@ -7,6 +7,7 @@ interface SEOProps {
   image?: string;
   url?: string;
   type?: string;
+  jsonLd?: Record<string, any>;
 }
 
 export default function SEO({ 
@@ -14,9 +15,20 @@ export default function SEO({
   description = 'Access top-tier courses, learn from expert teachers, and elevate your knowledge across various subjects.', 
   image = 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&q=80&w=1200', 
   url = window.location.href,
-  type = 'website'
+  type = 'website',
+  jsonLd
 }: SEOProps) {
   const siteTitle = title.includes('Learning Platform') ? title : `${title} | Learning Platform`;
+
+  // Default WebSite schema if none provided
+  const schema = jsonLd || {
+    "@context": "https://schema.org",
+    "@type": type === 'article' ? 'Article' : 'WebSite',
+    "name": siteTitle,
+    "description": description,
+    "url": url,
+    "image": image,
+  };
 
   return (
     <Helmet>
@@ -24,6 +36,7 @@ export default function SEO({
       <title>{siteTitle}</title>
       <meta name="title" content={siteTitle} />
       <meta name="description" content={description} />
+      <meta name="robots" content="index, follow" />
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
@@ -38,6 +51,11 @@ export default function SEO({
       <meta property="twitter:title" content={siteTitle} />
       <meta property="twitter:description" content={description} />
       <meta property="twitter:image" content={image} />
+
+      {/* Schema.org JSON-LD */}
+      <script type="application/ld+json">
+        {JSON.stringify(schema)}
+      </script>
     </Helmet>
   );
 }

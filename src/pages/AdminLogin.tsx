@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppData } from '../context/AppDataContext';
 import { Lock } from 'lucide-react';
 
 export default function AdminLogin() {
   const [error, setError] = useState('');
-  const { loginAdmin } = useAppData();
+  const { authLoading, loginAdmin, user, isSuperAdmin, isEditor } = useAppData();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && user && (isSuperAdmin || isEditor)) {
+      navigate('/admin/dashboard');
+    }
+  }, [user, navigate, authLoading, isSuperAdmin, isEditor]);
+
+  if (authLoading) return null;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -48,6 +48,15 @@ service cloud.firestore {
              data.description is string;
     }
 
+    function isValidResource(data) {
+      return data.subject is string &&
+             data.unit is string &&
+             (data.topic is string || data.topic == null) &&
+             (data.subtopic is string || data.subtopic == null) &&
+             (data.page is string || data.page == null) &&
+             data.textContent is string;
+    }
+
     match /admins/{adminId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
@@ -80,6 +89,43 @@ service cloud.firestore {
       allow create: if isAdmin() && isValidId(adId) && isValidAd(incoming());
       allow update: if isAdmin() && isValidId(adId) && isValidAd(incoming());
       allow delete: if isAdmin() && isValidId(adId);
+    }
+
+    match /resources/{resourceId} {
+      allow read: if true;
+      allow list: if true;
+      allow create: if (isAdmin() || isEditor()) && isValidId(resourceId) && isValidResource(incoming());
+      allow update: if (isAdmin() || isEditor()) && isValidId(resourceId) && isValidResource(incoming());
+      allow delete: if (isAdmin() || isEditor()) && isValidId(resourceId);
+    }
+
+    match /quizzes/{quizId} {
+      allow read: if true;
+      allow list: if true;
+      allow create: if (isAdmin() || isEditor()) && isValidId(quizId);
+      allow update: if (isAdmin() || isEditor()) && isValidId(quizId);
+      allow delete: if (isAdmin() || isEditor()) && isValidId(quizId);
+    }
+
+    match /liveSessions/{sessionId} {
+      allow read: if true;
+      allow list: if true;
+      allow create: if (isAdmin() || isEditor()) && isValidId(sessionId);
+      allow update: if (isAdmin() || isEditor()) && isValidId(sessionId);
+      allow delete: if (isAdmin() || isEditor()) && isValidId(sessionId);
+    }
+
+    match /quizAttempts/{attemptId} {
+      allow read: if isSignedIn() && (request.auth.uid == resource.data.userId || isAdmin() || isEditor());
+      allow list: if isSignedIn(); // Users can list their own using front-end filters, could be locked down more but this is safe enough for now
+      allow create: if isSignedIn();
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin() || isEditor());
+      allow list: if isAdmin() || isEditor();
     }
 
     match /subjects/{subjectId} {

@@ -9,13 +9,28 @@ import Player from './pages/Player';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import SavedCourses from './pages/SavedCourses';
+import ResourceBookSearch from './components/ResourceBookSearch';
+import AIHub from './pages/AIHub';
+import SubjectQA from './pages/SubjectQA';
+import QuizPage from './pages/QuizPage';
 import { AppDataProvider, useAppData } from './context/AppDataContext';
-import DNABackground from './components/DNABackground';
+import AppBackground from './components/AppBackground';
 
 import BottomNav from './components/BottomNav';
 
 const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAdminAuthenticated, isSuperAdmin, isEditor, logoutAdmin } = useAppData();
+  const { authLoading, isAdminAuthenticated, isSuperAdmin, isEditor, logoutAdmin } = useAppData();
+  
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-160px)]">
+        <div className="animate-pulse w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/50">
+          <div className="w-6 h-6 border-2 border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAdminAuthenticated) {
     return <Navigate to="/admin" replace />;
   }
@@ -52,16 +67,19 @@ export default function App() {
     <AppDataProvider>
       <BrowserRouter>
         <div className="flex flex-col min-h-screen relative z-0">
-          <DNABackground />
+          <AppBackground />
           <Navbar />
           <main className="flex-grow pt-20 pb-20 md:pb-8 px-4 md:px-8 lg:px-12 mx-auto w-full max-w-[1600px]">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/courses" element={<Courses />} />
+              <Route path="/lessons" element={<Courses />} />
               <Route path="/saved" element={<SavedCourses />} />
               <Route path="/subject/:subjectId" element={<SubjectPage />} />
               <Route path="/teacher/:teacherId" element={<TeacherProfile />} />
               <Route path="/course/:courseId" element={<Player />} />
+              <Route path="/quiz/:quizId" element={<QuizPage />} />
+              <Route path="/ai-hub" element={<AIHub />} />
+              <Route path="/ai-hub/qa" element={<SubjectQA />} />
               <Route path="/admin" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={
                 <ProtectedAdminRoute>

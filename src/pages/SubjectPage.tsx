@@ -10,12 +10,16 @@ export default function SubjectPage() {
   const { subjectId } = useParams();
   const subject = subjects.find(s => s.id === subjectId);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [selectedMedium, setSelectedMedium] = useState<string>('');
 
   if (!subject) {
     return <div className="text-center py-20">Subject not found</div>;
   }
 
-  const subjectCourses = courses.filter(c => c.subjectId === subject.id);
+  const subjectCourses = courses
+    .filter(c => c.subjectId === subject.id)
+    .filter(c => selectedMedium ? c.medium === selectedMedium : true);
+
   const subjectTeachers = teachers.filter(t => t.subjectId === subject.id);
 
   const displayedCategories = activeCategoryId 
@@ -45,22 +49,33 @@ export default function SubjectPage() {
           </div>
       </div>
 
-      <div className="flex space-x-2 overflow-x-auto pb-2 custom-scrollbar">
-        <button
-          onClick={() => setActiveCategoryId(null)}
-          className={`nav-pill whitespace-nowrap ${activeCategoryId === null ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
-        >
-          All Categories
-        </button>
-        {subcategories.map(cat => (
+      <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between items-start md:items-center">
+        <div className="flex space-x-2 overflow-x-auto pb-2 custom-scrollbar flex-grow">
           <button
-            key={cat.id}
-            onClick={() => setActiveCategoryId(cat.id)}
-            className={`nav-pill whitespace-nowrap ${activeCategoryId === cat.id ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+            onClick={() => setActiveCategoryId(null)}
+            className={`nav-pill whitespace-nowrap ${activeCategoryId === null ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
           >
-            {cat.name}
+            All Categories
           </button>
-        ))}
+          {subcategories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategoryId(cat.id)}
+              className={`nav-pill whitespace-nowrap ${activeCategoryId === cat.id ? 'nav-pill-active' : 'text-gray-400 hover:text-white'}`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+        <select
+          value={selectedMedium}
+          onChange={(e) => setSelectedMedium(e.target.value)}
+          className="bg-slate-800/50 border border-white/10 rounded-lg text-sm px-3 py-2 text-slate-200 outline-none focus:border-cyan-500"
+        >
+          <option value="">All Mediums</option>
+          <option value="Sinhala">Sinhala</option>
+          <option value="English">English</option>
+        </select>
       </div>
 
       {displayedCategories.map(cat => {

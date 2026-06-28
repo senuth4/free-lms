@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150" width="100%" height="100%">
+  <defs>
+    <linearGradient id="book-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1E88E5" />
+      <stop offset="100%" stop-color="#00CFFF" />
+    </linearGradient>
+    <linearGradient id="book-dark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#071426" />
+      <stop offset="100%" stop-color="#0a2a50" />
+    </linearGradient>
+    <linearGradient id="flask-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00CFFF" stop-opacity="0.2" />
+      <stop offset="60%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+
+  <!-- Open Book -->
+  <path d="M100 110 C80 95, 40 100, 30 105 L30 115 C40 110, 80 105, 100 120 C120 105, 160 110, 170 115 L170 105 C160 100, 120 95, 100 110 Z" fill="url(#book-grad)" />
+  <path d="M100 100 C80 85, 45 90, 35 95 L35 105 C45 100, 80 95, 100 110 C120 95, 155 100, 165 105 L165 95 C155 90, 120 85, 100 100 Z" fill="url(#book-dark)" opacity="0.9" />
+  <path d="M100 90 C80 75, 50 80, 40 85 L40 95 C50 90, 80 85, 100 100 C120 85, 150 90, 160 95 L160 85 C150 80, 120 75, 100 90 Z" fill="url(#book-grad)" />
+  <path d="M100 80 C80 65, 50 70, 40 75 L40 85 C50 80, 80 75, 100 90 C120 75, 150 80, 160 85 L160 75 C150 70, 120 65, 100 80 Z" fill="url(#book-grad)" />
+
+  <!-- Flask -->
+  <path d="M90 30 L110 30 L110 50 L125 80 A20 20 0 0 1 110 110 L90 110 A20 20 0 0 1 75 80 L90 50 Z" fill="url(#flask-grad)" stroke="#1E88E5" stroke-width="3" />
+  <path d="M85 30 L115 30" stroke="#1E88E5" stroke-width="5" stroke-linecap="round" />
+  <circle cx="95" cy="85" r="4" fill="#ffffff" />
+  <circle cx="105" cy="95" r="2.5" fill="#ffffff" />
+  <circle cx="98" cy="102" r="1.5" fill="#ffffff" />
+
+  <!-- Plant/Leaf -->
+  <path d="M70 50 C60 40, 40 45, 50 60 C65 65, 75 55, 70 50 Z" fill="#22c55e" />
+  <path d="M60 40 C55 30, 45 35, 50 45 C55 45, 60 45, 60 40 Z" fill="#16a34a" />
+
+  <!-- Molecule -->
+  <line x1="135" y1="50" x2="155" y2="35" stroke="#1E88E5" stroke-width="2" />
+  <line x1="135" y1="50" x2="150" y2="70" stroke="#1E88E5" stroke-width="2" />
+  <line x1="150" y1="70" x2="170" y2="60" stroke="#1E88E5" stroke-width="2" />
+  <line x1="155" y1="35" x2="170" y2="60" stroke="#1E88E5" stroke-width="2" />
+
+  <circle cx="135" cy="50" r="7" fill="#F5B942" />
+  <circle cx="155" cy="35" r="6" fill="#1E88E5" />
+  <circle cx="150" cy="70" r="6" fill="#00CFFF" />
+  <circle cx="170" cy="60" r="5" fill="#F5B942" />
+</svg>
