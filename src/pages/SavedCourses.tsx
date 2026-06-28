@@ -1,7 +1,7 @@
 import SEO from '../components/SEO';
 import { useAppData } from '../context/AppDataContext';
 import CourseCard from '../components/CourseCard';
-import { Bookmark, LayoutDashboard, User, PlayCircle, FileQuestion, HelpCircle, CheckCircle, Sun, Bell, Clock, Brain, MoreVertical, LayoutTemplate, Shield, Video, Calendar, ExternalLink } from 'lucide-react';
+import { Bookmark, LayoutDashboard, User, PlayCircle, FileQuestion, HelpCircle, CheckCircle, Sun, Bell, Clock, Brain, MoreVertical, LayoutTemplate, Shield, Video, Calendar, ExternalLink, Trophy } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 

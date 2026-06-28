@@ -157,7 +157,7 @@ JSON Schema:
 }`;
 
       const response = await generateContentWithRetry(ai, {
-        model: "gemini-3.1-flash-lite",
+        model: "gemini-2.5-flash",
         contents: [
             {
                 role: 'user',
@@ -256,7 +256,7 @@ JSON Schema:
 }`;
 
       const response = await generateContentWithRetry(ai, {
-        model: "gemini-3.1-flash-lite",
+        model: "gemini-2.5-flash",
         contents: [
             {
                 role: 'user',
@@ -345,7 +345,7 @@ JSON Schema:
 }`;
 
       const response = await generateContentWithRetry(ai, {
-        model: "gemini-3.1-flash-lite",
+        model: "gemini-2.5-flash",
         contents: [
             {
                 role: 'user',
@@ -465,7 +465,7 @@ CRITICAL RULES:
       const finalPrompt = `CONTEXT:\n${contextString}\n\nQUESTION: ${prompt}`;
 
       const response = await generateContentWithRetry(ai, {
-        model: "gemini-3.1-flash-lite",
+        model: "gemini-2.5-flash",
         contents: finalPrompt,
         config: {
           systemInstruction,

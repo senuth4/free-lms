@@ -80,6 +80,7 @@ export default function App() {
               <Route path="/quiz/:quizId" element={<QuizPage />} />
               <Route path="/ai-hub" element={<AIHub />} />
               <Route path="/ai-hub/qa" element={<SubjectQA />} />
+              <Route path="/resource-search" element={<ResourceBookSearch />} />
               <Route path="/admin" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={
                 <ProtectedAdminRoute>
